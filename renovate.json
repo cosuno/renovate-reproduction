@@ -1,0 +1,53 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    ":approveMajorUpdates",
+    ":dependencyDashboard",
+    ":ignoreModulesAndTests",
+    ":prConcurrentLimitNone",
+    ":semanticPrefixFixDepsChoreOthers",
+    "replacements:all",
+    "workarounds:all"
+  ],
+  "enabledManagers": [
+    "circleci",
+    "dockerfile",
+    "docker-compose",
+    "github-actions",
+    "npm",
+    "custom.regex",
+    "terraform"
+  ],
+  "branchPrefix": "dependencies/",
+  "labels": ["📦 dependencies"],
+  "assigneesFromCodeOwners": true,
+  "timezone": "Europe/Berlin",
+  "configMigration": true,
+  "osvVulnerabilityAlerts": true,
+  "dependencyDashboardOSVVulnerabilitySummary": "all",
+  "platformCommit": true,
+  "prHourlyLimit": 5,
+  "baseBranches": ["$default"],
+  "useBaseBranchConfig": "merge",
+  "minimumReleaseAge": "72 hours",
+  "schedule": "on the first day of the month",
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Update _VERSION variables in Dockerfiles",
+      "fileMatch": ["(^|/|\\.)Dockerfile$", "(^|/)Dockerfile\\.[^/]*$"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[a-z-]+?) depName=(?<depName>.+?)(?: packageName=(?<packageName>.+?))?(?: versioning=(?<versioning>[a-z-]+?))?\\s(?:ENV|ARG) .+?_VERSION=(?<currentValue>.+?)\\s"
+      ],
+      "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
+    }
+  ],
+  "packageRules": [
+    {
+      "description": "Enable npm dependency updates",
+      "matchPackagePatterns": ["*"],
+      "matchManagers": ["npm"],
+      "enabled": true
+    }
+  ]
+}
